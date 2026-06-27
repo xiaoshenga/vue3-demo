@@ -1,16 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+:root {
+  /* brand neon colors — shared by both themes */
+  --neon-cyan: #00f0ff;
+  --neon-purple: #b14aff;
+  --neon-pink: #ff2d95;
+
+  /* dark theme (default) */
+  --bg: #05010f;
+  --bg-soft: #0a0518;
+  --text: #e8e8ff;
+  --text-dim: #9a93c4;
+  --text-muted: #7a7499;
+  --text-faint: #6a6490;
+  --panel: rgba(20, 14, 40, 0.6);
+  --panel-solid: rgba(20, 14, 40, 0.85);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --input-bg: rgba(0, 0, 0, 0.3);
+  --track: rgba(255, 255, 255, 0.08);
+  --nav-bg: rgba(5, 1, 15, 0.7);
+  --aurora-opacity: 1;
+  --particle-line: 0.25;
+  --heading-grad: #ffffff;
+  --cta-text: #e8d8ff;
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #eef0f8;
+  --bg-soft: #ffffff;
+  --text: #1a1433;
+  --text-dim: #5a5478;
+  --text-muted: #7a749c;
+  --text-faint: #9a93b8;
+  --panel: rgba(255, 255, 255, 0.72);
+  --panel-solid: rgba(255, 255, 255, 0.92);
+  --border: rgba(20, 10, 50, 0.1);
+  --border-strong: rgba(20, 10, 50, 0.18);
+  --input-bg: rgba(255, 255, 255, 0.7);
+  --track: rgba(20, 10, 50, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.7);
+  --aurora-opacity: 0.5;
+  --particle-line: 0.18;
+  --heading-grad: #2a2150;
+  --cta-text: #7d24c4;
+  color-scheme: light;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f0f2f5;
-  color: #333;
+  font-family: 'Noto Sans SC', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--neon-purple), var(--neon-cyan));
+  border-radius: 10px;
+}
+
+::selection {
+  background: var(--neon-purple);
+  color: #fff;
 }
 
 #app {
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.font-display {
+  font-family: 'Orbitron', sans-serif;
 }

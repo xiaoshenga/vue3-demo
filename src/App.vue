@@ -1,95 +1,233 @@
 <template>
-  <div class="app">
-    <header class="header">
-      <h1>Vue3 Demo</h1>
-      <nav>
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          :class="['nav-btn', { active: activeTab === tab.key }]"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.label }}
-        </button>
-      </nav>
-    </header>
+  <ParticleBg />
 
-    <main class="main">
-      <Counter v-if="activeTab === 'counter'" />
-      <TodoList v-else-if="activeTab === 'todo'" />
-      <FetchDemo v-else-if="activeTab === 'fetch'" />
-    </main>
-  </div>
+  <div class="aurora"></div>
+
+  <nav class="navbar" :class="{ scrolled }">
+    <div class="logo font-display">
+      <span class="logo-mark">◆</span> NEON<span class="logo-accent">UI</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">特性</a>
+      <a href="#" @click.prevent="scrollDemo">交互</a>
+      <button class="theme-toggle" @click="toggle" :title="theme === 'dark' ? '切换到亮色' : '切换到暗色'">
+        <span class="toggle-track" :class="{ light: theme === 'light' }">
+          <span class="toggle-thumb">{{ theme === 'dark' ? '🌙' : '☀️' }}</span>
+        </span>
+      </button>
+      <button class="nav-cta">开始使用</button>
+    </div>
+  </nav>
+
+  <main>
+    <HeroSection />
+    <FeatureCards />
+    <InteractiveDemo ref="demoSection" />
+  </main>
+
+  <footer class="footer">
+    <div class="footer-glow"></div>
+    <div class="logo font-display">
+      <span class="logo-mark">◆</span> NEON<span class="logo-accent">UI</span>
+    </div>
+    <p>一个炫酷的演示项目</p>
+    <div class="footer-tech">
+      <span>Canvas</span>
+      <span>CSS3</span>
+    </div>
+  </footer>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import Counter from './components/Counter.vue'
-import TodoList from './components/TodoList.vue'
-import FetchDemo from './components/FetchDemo.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import ParticleBg from './components/ParticleBg.vue'
+import HeroSection from './components/HeroSection.vue'
+import FeatureCards from './components/FeatureCards.vue'
+import InteractiveDemo from './components/InteractiveDemo.vue'
+import { useTheme } from './composables/useTheme.js'
 
-const activeTab = ref('counter')
+const { theme, toggle } = useTheme()
+const scrolled = ref(false)
+const demoSection = ref(null)
 
-const tabs = [
-  { key: 'counter', label: '计数器' },
-  { key: 'todo', label: 'Todo 列表' },
-  { key: 'fetch', label: '数据请求' },
-]
+function onScroll() {
+  scrolled.value = window.scrollY > 50
+}
+
+function scrollDemo() {
+  demoSection.value?.$el.scrollIntoView({ behavior: 'smooth' })
+}
+
+onMounted(() => window.addEventListener('scroll', onScroll))
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
 </script>
 
 <style scoped>
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--aurora-opacity);
+  transition: opacity 0.5s;
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 10%, rgba(177, 74, 255, 0.18), transparent),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0, 240, 255, 0.14), transparent),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(255, 45, 149, 0.12), transparent);
 }
 
-.header {
-  background: #fff;
-  padding: 16px 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: space-between;
+  padding: 20px 5vw;
+  transition: all 0.4s;
 }
 
-.header h1 {
-  font-size: 20px;
-  color: #42b883;
+.navbar.scrolled {
+  padding: 14px 5vw;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
 }
 
-nav {
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+
+.logo-mark {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.logo-accent {
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 28px;
 }
 
-.nav-btn {
-  padding: 6px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 20px;
-  background: transparent;
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.25s;
+}
+
+.nav-links a:hover { color: var(--neon-cyan); }
+
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-track {
+  width: 52px;
+  height: 28px;
+  border-radius: 20px;
+  background: var(--track);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: background 0.3s;
+}
+
+.toggle-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 0 12px rgba(177, 74, 255, 0.6);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-track.light .toggle-thumb {
+  transform: translateX(24px);
+  background: linear-gradient(135deg, #ffd84a, #ff9d2d);
+  box-shadow: 0 0 12px rgba(255, 180, 60, 0.7);
+}
+
+.nav-cta {
+  padding: 10px 22px;
+  border: 1px solid rgba(177, 74, 255, 0.5);
+  border-radius: 10px;
+  background: rgba(177, 74, 255, 0.12);
+  color: var(--cta-text);
   font-size: 14px;
-  color: #666;
-  transition: all 0.2s;
+  cursor: pointer;
+  transition: all 0.25s;
 }
 
-.nav-btn:hover {
-  border-color: #42b883;
-  color: #42b883;
+.nav-cta:hover {
+  background: rgba(177, 74, 255, 0.25);
+  box-shadow: 0 0 20px rgba(177, 74, 255, 0.4);
 }
 
-.nav-btn.active {
-  background: #42b883;
-  border-color: #42b883;
-  color: #fff;
+.footer {
+  position: relative;
+  text-align: center;
+  padding: 60px 24px;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
 }
 
-.main {
-  flex: 1;
-  padding: 32px;
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
+.footer-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 16px 0 24px;
+}
+
+.footer-tech {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-tech span {
+  padding: 5px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+@media (max-width: 600px) {
+  .nav-links { gap: 14px; }
+  .nav-links a { display: none; }
 }
 </style>
